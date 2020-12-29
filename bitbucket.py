@@ -226,6 +226,7 @@ def process_payload_cloud(hook_path, data, event_key):
         push_commit_date = data["push"]["changes"][0]["new"]["target"]["date"]
         push_commit_repository = data["repository"]["name"]
         push_commit_repository_url = data["repository"]["links"]["html"]["href"]
+        push_branch = data["push"]["changes"][0]["new"]["name"]
 
         # Following code strip the last +HH:MM(timezone offset) of date string and then convert
         # it to datetime object in pyhton.
@@ -236,6 +237,9 @@ def process_payload_cloud(hook_path, data, event_key):
 
         if data["push"]["changes"][0]["forced"]:
             text = text.replace("pushed", "**force pushed**")
+
+        if push_branch is not None:
+            text += " into {}".format(push_branch)
 
         text += "\n"
         for commit in data["push"]["changes"][0]["commits"]:
